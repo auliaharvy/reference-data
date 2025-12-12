@@ -1,6 +1,10 @@
 const { json } = require("express");
 const db = require("../models");
 const Ref = db.refs;
+const RefUnit = db.refUnits;
+const RefGoodsCodes = db.refGoodsCodes;
+const RefServiceCodes = db.refServiceCodes;
+const Region = db.region;
 
 // Create and Save a new Tutorial
 // exports.create = (req, res) => {
@@ -45,10 +49,9 @@ exports.findAll = (req, res) => {
   Ref.find(condition)
     .then(data => {
       res.json({
-        message: "findAll",
-        dataType: referenceDataType,
-        refs: data,
-        queryCondition: condition // Added for debugging: shows the actual query condition used
+        code: 200,
+        message: "References retrieved successfully",
+        data: data
       });
     })
     .catch(err => {
@@ -59,97 +62,103 @@ exports.findAll = (req, res) => {
     });
 };
 
-// Find a single Tutorial with an id
-// exports.findOne = (req, res) => {
-//   const id = req.params.id;
+exports.findAllUnits = (req, res) => {
+  const referenceDataType = req.query.referenceDataType;
+  let condition = {};
 
-//   Ref.findById(id)
-//     .then(data => {
-//       if (!data)
-//         res.status(404).send({ message: "Not found Tutorial with id " + id });
-//       else res.send(data);
-//     })
-//     .catch(err => {
-//       res
-//         .status(500)
-//         .send({ message: "Error retrieving Tutorial with id=" + id });
-//     });
-// };
+  if (referenceDataType) {
+    condition = { referenceDataType: { $regex: new RegExp(referenceDataType), $options: "i" } };
+  }
 
-// Update a Tutorial by the id in the request
-// exports.update = (req, res) => {
-//   if (!req.body) {
-//     return res.status(400).send({
-//       message: "Data to update can not be empty!"
-//     });
-//   }
+  RefUnit.find(condition)
+    .then(data => {
+      res.json({
+        code: 200,
+        message: "Unit retrieved successfully",
+        data: data
+      });
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving tutorials."
+      });
+    });
+};
 
-//   const id = req.params.id;
+exports.findAllGoodsCodes = (req, res) => {
+  const referenceDataType = req.query.referenceDataType;
+  let condition = {};
 
-//   Ref.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-//     .then(data => {
-//       if (!data) {
-//         res.status(404).send({
-//           message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found!`
-//         });
-//       } else res.send({ message: "Tutorial was updated successfully." });
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message: "Error updating Tutorial with id=" + id
-//       });
-//     });
-// };
+  if (referenceDataType) {
+    condition = { referenceDataType: { $regex: new RegExp(referenceDataType), $options: "i" } };
+  }
 
-// Delete a Tutorial with the specified id in the request
-// exports.delete = (req, res) => {
-//   const id = req.params.id;
+  RefGoodsCodes.find(condition)
+    .then(data => {
+      res.json({
+        code: 200,
+        message: "Goods Codes retrieved successfully",
+        data: data
+      });
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving tutorials."
+      });
+    });
+};
 
-//   Ref.findByIdAndRemove(id, { useFindAndModify: false })
-//     .then(data => {
-//       if (!data) {
-//         res.status(404).send({
-//           message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
-//         });
-//       } else {
-//         res.send({
-//           message: "Tutorial was deleted successfully!"
-//         });
-//       }
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message: "Could not delete Tutorial with id=" + id
-//       });
-//     });
-// };
+exports.findAllServiceCodes = (req, res) => {
+  const referenceDataType = req.query.referenceDataType;
+  let condition = {};
 
-// Delete all Tutorials from the database.
-// exports.deleteAll = (req, res) => {
-//   Ref.deleteMany({})
-//     .then(data => {
-//       res.send({
-//         message: `${data.deletedCount} Tutorials were deleted successfully!`
-//       });
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message:
-//           err.message || "Some error occurred while removing all tutorials."
-//       });
-//     });
-// };
+  if (referenceDataType) {
+    condition = { referenceDataType: { $regex: new RegExp(referenceDataType), $options: "i" } };
+  }
 
-// Find all published Tutorials
-// exports.findAllPublished = (req, res) => {
-//   Ref.find({ published: true })
-//     .then(data => {
-//       res.send(data);
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message:
-//           err.message || "Some error occurred while retrieving tutorials."
-//       });
-//     });
-// };
+  RefServiceCodes.find(condition)
+    .then(data => {
+      res.json({
+        code: 200,
+        message: "Service Codes retrieved successfully",
+        data: data
+      });
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving tutorials."
+      });
+    });
+};
+
+exports.findAllRegion = (req, res) => {
+  const regionType = req.query.regionType;
+  const parentId = req.query.parentId;
+  let condition = {};
+
+  if (regionType) {
+    condition.regionType = parseInt(regionType);
+  }
+
+  if (parentId) {
+    condition.parentId = parseInt(parentId);
+  }
+
+  Region.find(condition)
+    .then(data => {
+      res.json({
+        code: 200,
+        message: "Region retrieved successfully",
+        data: data
+      });
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving regions."
+      });
+    });
+};
